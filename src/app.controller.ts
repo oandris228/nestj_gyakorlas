@@ -1,6 +1,8 @@
-import { Controller, Get, Render } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Render } from '@nestjs/common';
 import { AppService } from './app.service';
 import { quotes } from './quotes';
+import { response } from 'express';
+import { error } from 'console';
 
 @Controller()
 export class AppController {
@@ -42,8 +44,32 @@ export class AppController {
 
       authors = new Map([...authors.entries()].sort((a, b) => b[1] - a[1]));
 
+      console.log(authors)
+
       return {
-        response: authors
+        authors
       };
+    };
+
+    @Get('quotes/:id')
+    @Render('onequote')
+    oneQuote(@Param('id') id: string) {
+        try {
+          return { gamer: quotes.quotes[id].quote };
+        } catch (error) {
+          return { gamer: "Hiba." };
+        }
+    };
+
+    @Get('deletequote/:id')
+    @Render('deletequote')
+    deleteQuote(@Param('id') szam: string) {
+        if (quotes.quotes.includes(quotes.quotes[szam])) {
+          quotes.quotes.splice(parseInt(szam));
+          console.log(quotes.quotes[szam]);
+          return { response: "Sikeres törlés"}
+        } else {
+          return {response: "Hiba"}
+        }
     };
   }
