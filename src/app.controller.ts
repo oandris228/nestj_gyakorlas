@@ -1,7 +1,7 @@
-import { Controller, Delete, Get, Param, Render } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Query, Render } from '@nestjs/common';
 import { AppService } from './app.service';
 import { quotes } from './quotes';
-import { response } from 'express';
+import { query, response } from 'express';
 import { error } from 'console';
 
 @Controller()
@@ -72,4 +72,38 @@ export class AppController {
           return {response: "Hiba"}
         }
     };
+
+    @Get('search')
+    @Render('searchquote')
+    searchQuote(@Query('search') search: string = " ") {
+      let response = [];
+      quotes.quotes.forEach(gamer => {
+        if (gamer.quote.toLowerCase().includes(search.toLowerCase())) {
+          response.push(gamer);
+        }
+      });
+      return {response};
+    }
+
+    @Get('authorrandomform')
+    @Render('authorrandomform')
+    authorRandomForm() {}
+
+    @Get('authorrandom')
+    @Render('authorrandom')
+    authorRandom(@Query('author') author: string) {
+      try {
+        console.log(author)
+        let lol = [];
+        quotes.quotes.forEach(gamer => {
+          if (gamer.author.toLowerCase().includes(author.toLowerCase())) {
+            lol.push(gamer.quote);
+          }
+        });
+  
+        return { response: lol[Math.floor(Math.random() * (lol.length))]};
+      } catch (error) {
+        return { response: "lmao"};
+      }
+    }
   }
